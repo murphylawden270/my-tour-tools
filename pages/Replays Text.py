@@ -54,12 +54,12 @@ with col1:
 
         teams = []
 
-        x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", Block, re.MULTILINE)
+        x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", block, re.MULTILINE)
         for y in x:
             u = y.split("vs")
             for z in u:
-                w1 = re.sub(r"[^a-zA-Z\s]", "", z)
-                w2 = re.sub(r":[^:]+:", "", w1)
+                w1 = re.sub(r":[^:]+:", "", w1)
+                w2 = re.sub(r"[^a-zA-Z\s]", "", z)
                 teams.append(w2.strip())
 
         k = ""
