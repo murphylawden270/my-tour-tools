@@ -24,15 +24,7 @@ st.markdown(
         .block-container {
             padding-top: 1rem;
             padding-bottom: 1rem;
-        div[data-testid="stHorizontalBlock"] {
-            gap: 1.75rem;
         }
-        div.stButton > button {
-            white-space: nowrap;
-            width: auto;
-            padding: 0.5rem 1.5rem;
-        }
-    </style>
     """,
     unsafe_allow_html=True,
 )
