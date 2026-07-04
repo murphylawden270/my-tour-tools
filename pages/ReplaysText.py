@@ -25,7 +25,7 @@ st.markdown(
             padding-top: 1rem;
             padding-bottom: 1rem;
         div[data-testid="stHorizontalBlock"] {
-            gap: 0.5rem;
+            gap: 2rem;
         }
         div.stButton > button {
             white-space: nowrap;
