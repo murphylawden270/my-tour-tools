@@ -58,8 +58,8 @@ with col1:
         for y in x:
             u = y.split("vs")
             for z in u:
-                w1 = re.sub(r":[^:]+:", "", w1)
-                w2 = re.sub(r"[^a-zA-Z\s]", "", z)
+                w1 = re.sub(r":[^:]+:", "", z)
+                w2 = re.sub(r"[^a-zA-Z\s]", "", w1)
                 teams.append(w2.strip())
 
         k = ""
