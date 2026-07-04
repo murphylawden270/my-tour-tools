@@ -2,7 +2,7 @@ import streamlit as st
 import re
 
 st.set_page_config(
-    page_title="Replays Text",
+    page_title="ReplaysText",
     layout="wide"
 )
 
