@@ -55,7 +55,6 @@ with col1:
         teams = []
 
         x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", Block, re.MULTILINE)
-        print(x)
         for y in x:
             u = y.split("vs")
             for z in u:
