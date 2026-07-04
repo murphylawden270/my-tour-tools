@@ -54,16 +54,14 @@ with col1:
 
         teams = []
 
-        x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", Block, re.MULTILINE)
+        x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", block, re.MULTILINE)
+        print(x)
         for y in x:
-            u1 = re.sub(r":[^:]+:", "", y[0])
-            v1 = re.sub(r"[^a-zA-Z0-9\s]", "", u1).strip()
-            if v1 not in teams:
-                teams.append(v1)
-            u2 = re.sub(r":[^:]+:", "", y[1])
-            v2 = re.sub(r"[^a-zA-Z0-9\s]", "", u2).strip()
-            if v2 not in teams:
-                teams.append(v2)
+            u = y.split("vs")
+            for z in u:
+                w1 = re.sub(r"[^a-zA-Z\s]", "", z)
+                w2 = re.sub(r":[^:]+:", "", w1)
+                teams.append(w2.strip())
 
         k = ""
         for t in teams:
