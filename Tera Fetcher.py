@@ -10,6 +10,18 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+        .block-container {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.title("Tera Fetcher Tool For Usage Stats:")
 
 if "bbcode" not in st.session_state:
