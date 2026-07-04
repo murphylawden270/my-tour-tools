@@ -50,7 +50,7 @@ if st.session_state.get('streamlit'):
 
 Block = st.text_area("Enter Replay Text Block Here...", value=st.session_state.get("links", ""), key="block", height=200)
 
-col1, col2 = st.columns([1, 1])
+col1, col2, _ = st.columns([1, 1, 8])
 
 with col1:
     if st.button("Generate", key='generate', use_container_width=True):
