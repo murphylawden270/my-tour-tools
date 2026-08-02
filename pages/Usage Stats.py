@@ -27,7 +27,7 @@ st.markdown(
 )
 
 st.title("Usage Stats Generator:")
-st.caption("This application uses [eo.herokuapp](https://replaystats-eo.herokuapp.com/) as a base.")
+st.caption("This application uses [eo.herokuapp](https://replaystats-eo.herokuapp.com/) as a base. HUGE S/O to [Eo Ut Mortus](http://www.smogon.com/forums/members/eo-ut-mortus.9718/) for this awesome tool.")
 
 options = Options()
 options.add_argument("--headless=new")
