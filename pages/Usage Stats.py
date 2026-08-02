@@ -1,3 +1,7 @@
+import time
+
+start = time.time()
+
 import streamlit as st
 import re
 
@@ -6,6 +10,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+
+from concurrent.futures import ThreadPoolExecutor
 
 st.set_page_config(
     page_title="Usage Stats",
@@ -33,7 +39,7 @@ options = Options()
 options.add_argument("--headless=new")
 options.add_argument("--disable-gpu")
 
-bbcode = []
+all_bbcode = {}
 
 @st.dialog("Format Name")
 def name_dialog():
@@ -45,6 +51,64 @@ def name_dialog():
             else:
                 st.session_state.project[name] = []
                 st.rerun()
+
+def replay(key, values):
+    bbcode = []
+    driver = webdriver.Chrome(options=options)
+    driver.get('https://replaystats-eo.herokuapp.com/')
+
+    Replay_urls = driver.find_element(By.NAME, "replay_urls")
+    Replay_urls.send_keys(values)
+    Submit = driver.find_element(By.NAME, "link_submit")
+    Submit.click()
+
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "textarea.rawtext.results")))
+
+    main = []
+    usage = []
+    url = []
+    TextArea = driver.find_elements(By.CSS_SELECTOR, "textarea.rawtext.results")
+    for i in TextArea:
+            usage.append(i.get_attribute("value"))
+        
+    for i, j in enumerate(usage):
+            if i == 0:
+                if "Leads" in usage[3] and "1" in usage[3]:
+                    a = j.replace("[CODE]", '''[URL='1']Moves and Teammates[/URL] | [URL='2']Combos[/url] | [URL='3']Leads[/URL]
+[CODE]''')
+                    main.append(a)
+
+                else:
+                    a = j.replace("[CODE]", '''[URL='1']Moves and Teammates[/URL] | [URL='2']Combos[/url]
+[CODE]''')
+                    main.append(a)
+
+            elif i >= 1:
+                k = re.sub(r'\[IMG\](.*?)\[\/IMG\]|\[B\](.*?)\[\/B\]|\[\/?CODE\]', "", j)
+                k = k.strip()
+
+                driver.get('https://pokepast.es/')
+                
+                wait.until(EC.presence_of_element_located((By.NAME, "paste")))
+                Paste = driver.find_element(By.NAME, "paste")
+                driver.execute_script("arguments[0].value = arguments[1];", Paste, k)
+                driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", Paste)
+
+                Submit = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[value='Submit Paste!']")))
+                Submit.click()
+
+                wait.until(EC.presence_of_element_located((By.TAG_NAME, "pre")))
+
+                url.append(driver.current_url)
+
+    driver.quit()
+
+    Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("'1'", f"'{url[0]}'").replace("'2'", f"'{url[1]}'").replace("'3'", f"'{url[2]}'")
+    bbcode.append(Final)
+    bbcode.append("")
+
+    all_bbcode[key] = bbcode
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -59,64 +123,17 @@ if st.button("Generate"):
     if not st.session_state.project:
         st.error("No formats available! Please add a format first.")
     else:
-        for key, values in st.session_state.project.items():
-            replay = "\n".join(values)
-            driver = webdriver.Chrome(options=options)
-            driver.get('https://replaystats-eo.herokuapp.com/')
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            executor.map(replay, st.session_state.project.keys(), st.session_state.project.values())
 
-            Replay_urls = driver.find_element(By.NAME, "replay_urls")
-            Replay_urls.send_keys(values)
-            Submit = driver.find_element(By.NAME, "link_submit")
-            Submit.click()
-
-            wait = WebDriverWait(driver, 10)
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "textarea.rawtext.results")))
-
-            main = []
-            usage = []
-            url = []
-            TextArea = driver.find_elements(By.CSS_SELECTOR, "textarea.rawtext.results")
-            for i in TextArea:
-                    usage.append(i.get_attribute("value"))
-                
-            for i, j in enumerate(usage):
-                    if i == 0:
-                        if "Leads" in usage[3] and "1" in usage[3]:
-                            a = j.replace("[CODE]", '''[URL='1']Moves and Teammates[/URL] | [URL='2']Combos[/url] | [URL='3']Leads[/URL]
-[CODE]''')
-                            main.append(a)
-
-                        else:
-                            a = j.replace("[CODE]", '''[URL='1']Moves and Teammates[/URL] | [URL='2']Combos[/url]
-[CODE]''')
-                            main.append(a)
-
-                    elif i >= 1:
-                        k = re.sub(r'\[IMG\](.*?)\[\/IMG\]|\[B\](.*?)\[\/B\]|\[\/?CODE\]', "", j)
-                        k = k.strip()
-
-                        driver.get('https://pokepast.es/')
-                        
-                        wait.until(EC.presence_of_element_located((By.NAME, "paste")))
-                        Paste = driver.find_element(By.NAME, "paste")
-                        driver.execute_script("arguments[0].value = arguments[1];", Paste, k)
-                        driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", Paste)
-
-                        Submit = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[value='Submit Paste!']")))
-                        Submit.click()
-
-                        wait.until(EC.presence_of_element_located((By.TAG_NAME, "pre")))
-
-                        url.append(driver.current_url)
-
-            driver.quit()
-
-            Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("'1'", f"'{url[0]}'").replace("'2'", f"'{url[1]}'").replace("'3'", f"'{url[2]}'")
-            bbcode.append(Final)
-            bbcode.append("")
-
-final = "\n".join(bbcode)
+final = []
+for i in st.session_state.project.keys():
+    if i in all_bbcode:
+        final.append("\n".join(all_bbcode[i]))
 
 if final:
+    done = "\n".join(final)
+    end = time.time()
+    st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
-    st.code(final, language=None, height=300)
+    st.code(done, language=None, height=300)
