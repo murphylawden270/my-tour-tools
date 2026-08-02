@@ -26,7 +26,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("Usage Stats Generator")
+st.title("Usage Stats Generator:")
+st.caption("This application uses (eo.herokuapp)[https://replaystats-eo.herokuapp.com/] as a base.")
 
 options = Options()
 options.add_argument("--headless=new")
