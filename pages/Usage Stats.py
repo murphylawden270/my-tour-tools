@@ -78,8 +78,7 @@ if st.button("Generate"):
             TextArea = driver.find_elements(By.CSS_SELECTOR, "textarea.rawtext.results")
             for i in TextArea:
                     usage.append(i.get_attribute("value"))
-                    print(i.get_attribute("value"))
-
+                
             for i, j in enumerate(usage):
                     if i == 0:
                         if "Leads" in usage[3] and "1" in usage[3]:
