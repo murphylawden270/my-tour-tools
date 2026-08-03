@@ -21,6 +21,9 @@ st.set_page_config(
 if "project" not in st.session_state:
     st.session_state.project = {}
 
+if "all_bbcode" not in st.session_state:
+    st.session_state.all_bbcode = {}
+
 st.markdown(
     """
     <style>
@@ -38,8 +41,6 @@ st.caption("This application uses [eo.herokuapp](https://replaystats-eo.herokuap
 options = Options()
 options.add_argument("--headless=new")
 options.add_argument("--disable-gpu")
-
-all_bbcode = {}
 
 @st.dialog("Format Name")
 def name_dialog():
@@ -109,7 +110,7 @@ def replay(key, values):
     bbcode.append(Final)
     bbcode.append("")
 
-    all_bbcode[key] = bbcode
+    st.session_state.all_bbcode[key] = bbcode
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -136,8 +137,8 @@ with col2:
         
 final = []
 for i in st.session_state.project.keys():
-    if i in all_bbcode:
-        final.append("\n".join(all_bbcode[i]))
+    if i in st.session_state.all_bbcode:
+        final.append("\n".join(st.session_state.all_bbcode[i]))
 
 if final:
     done = "\n".join(final)
