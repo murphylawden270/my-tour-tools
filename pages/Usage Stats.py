@@ -37,6 +37,8 @@ st.caption("This application uses [eo.herokuapp](https://replaystats-eo.herokuap
 
 options = Options()
 options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
 
 all_bbcode = {}
@@ -123,7 +125,7 @@ if st.button("Generate"):
     if not st.session_state.project:
         st.error("No formats available! Please add a format first.")
     else:
-        with ThreadPoolExecutor(max_workers=2) as executor:
+        with ThreadPoolExecutor(max_workers=4) as executor:
             list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
 final = []
