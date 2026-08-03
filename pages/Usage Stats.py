@@ -60,7 +60,8 @@ def replay(key, values):
     driver.get('https://replaystats-eo.herokuapp.com/')
 
     Replay_urls = driver.find_element(By.NAME, "replay_urls")
-    Replay_urls.send_keys(values)
+    driver.execute_script("arguments[0].value = arguments[1];", Replay_urls, values)
+    driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", Replay_urls)
     Submit = driver.find_element(By.NAME, "link_submit")
     Submit.click()
 
