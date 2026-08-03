@@ -21,9 +21,6 @@ st.set_page_config(
 if "project" not in st.session_state:
     st.session_state.project = {}
 
-if "all_bbcode" not in st.session_state:
-    st.session_state.all_bbcode = {}
-
 st.markdown(
     """
     <style>
@@ -42,6 +39,8 @@ options = Options()
 options.add_argument("--headless=new")
 options.add_argument("--disable-gpu")
 
+all_bbcode = {}
+
 @st.dialog("Format Name")
 def name_dialog():
     name = st.text_input("Enter Your Format Name:")
@@ -55,9 +54,6 @@ def name_dialog():
 
 def replay(key, values):
     bbcode = []
-    options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
 
@@ -113,7 +109,7 @@ def replay(key, values):
     bbcode.append(Final)
     bbcode.append("")
 
-    st.session_state.all_bbcode[key] = bbcode
+    all_bbcode[key] = bbcode
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -124,7 +120,7 @@ for f, formats in enumerate(st.session_state.project):
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links
 
-col1, col2, _ = st.columns([1, 1, 8], gap="small")
+col1, col2, _ = st.columns([1, 1, 5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
         if not st.session_state.project:
@@ -140,8 +136,8 @@ with col2:
         
 final = []
 for i in st.session_state.project.keys():
-    if i in st.session_state.all_bbcode:
-        final.append("\n".join(st.session_state.all_bbcode[i]))
+    if i in all_bbcode:
+        final.append("\n".join(all_bbcode[i]))
 
 if final:
     done = "\n".join(final)
