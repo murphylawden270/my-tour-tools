@@ -121,7 +121,7 @@ for f, formats in enumerate(st.session_state.project):
 
 col1, col2, _ = st.columns([1,1,5], gap="small")
 with col1:
-    if st.button("Generate"):
+    if st.button("Generate", use_container_width=True):
         if not st.session_state.project:
             st.error("No formats available! Please add a format first.")
         else:
@@ -129,7 +129,7 @@ with col1:
                 executor.map(replay, st.session_state.project.keys(), st.session_state.project.values())
 
 with col2:
-    if st.button("Clear"):
+    if st.button("Clear", use_container_width=True):
         st.session_state.project.clear()
         st.rerun()
 
