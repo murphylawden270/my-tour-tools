@@ -58,7 +58,8 @@ def replay(key, values):
     driver.get('https://replaystats-eo.herokuapp.com/')
 
     Replay_urls = driver.find_element(By.NAME, "replay_urls")
-    Replay_urls.send_keys(values)
+    driver.execute_script("arguments[0].value = arguments[1];", Replay_urls, values)
+    driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", Replay_urls)
     Submit = driver.find_element(By.NAME, "link_submit")
     Submit.click()
 
@@ -119,19 +120,12 @@ for f, formats in enumerate(st.session_state.project):
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links
 
-col1, col2, _ = st.columns([1,1,5], gap="small")
-with col1:
-    if st.button("Generate", use_container_width=True):
-        if not st.session_state.project:
-            st.error("No formats available! Please add a format first.")
-        else:
-            with ThreadPoolExecutor(max_workers=5) as executor:
-                executor.map(replay, st.session_state.project.keys(), st.session_state.project.values())
-
-with col2:
-    if st.button("Clear", use_container_width=True):
-        st.session_state.project.clear()
-        st.rerun()
+if st.button("Generate"):
+    if not st.session_state.project:
+        st.error("No formats available! Please add a format first.")
+    else:
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            executor.map(replay, st.session_state.project.keys(), st.session_state.project.values())
 
 final = []
 for i in st.session_state.project.keys():
