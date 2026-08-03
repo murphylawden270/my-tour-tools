@@ -124,7 +124,7 @@ if st.button("Generate"):
         st.error("No formats available! Please add a format first.")
     else:
         with ThreadPoolExecutor(max_workers=2) as executor:
-            executor.map(replay, st.session_state.project.keys(), st.session_state.project.values())
+            list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
 final = []
 for i in st.session_state.project.keys():
