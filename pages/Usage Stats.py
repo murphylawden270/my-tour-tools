@@ -144,7 +144,7 @@ for i in st.session_state.project.keys():
     if i in st.session_state.all_bbcode:
         st.session_state.final.append("\n".join(st.session_state.all_bbcode[i]))
 
-if st.session_state.final.keys():
+if st.session_state.final:
     done = "\n".join(st.session_state.final)
     end = time.time()
     st.caption(f"Time taken: {end - start} seconds.")
