@@ -21,12 +21,6 @@ st.set_page_config(
 if "project" not in st.session_state:
     st.session_state.project = {}
 
-if "all_bbcode" not in st.session_state:
-    st.session_state.all_bbcode = {}
-
-if "final" not in st.session_state:
-    st.session_state.final = []
-
 st.markdown(
     """
     <style>
@@ -135,6 +129,9 @@ with col1:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
+if "all_bbcode" not in st.session_state:
+    st.session_state.all_bbcode = {}
+
 for key, bbcode in output:
     st.session_state.all_bbcode[key] = bbcode
 
@@ -142,6 +139,9 @@ with col2:
     if st.button("Clear All", use_container_width=True):
         st.session_state.project.clear()
         st.rerun()
+
+if "final" not in st.session_state:
+    st.session_state.final = []
 
 for i in st.session_state.project.keys():
     if i in st.session_state.all_bbcode:
