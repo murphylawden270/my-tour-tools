@@ -25,8 +25,11 @@ if "all_bbcode" not in st.session_state:
 if "final" not in st.session_state:
     st.session_state.final = []
 
-if "processed" not in st.session_state:
-    st.session_state.processed = 0
+if "processed_replays" not in st.session_state:
+    st.session_state.processed_replays = 0
+
+if "processed_formats" not in st.session_state:
+    st.session_state.processed_formats = 0
 
 st.markdown(
     """
@@ -148,7 +151,8 @@ with col1:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
             for key, bbcode, rl in output:
-                st.session_state.processed += rl
+                st.session_state.processed_replays += rl
+                st.session_state.processed_replays += 1
                 st.session_state.all_bbcode[key] = bbcode
 
 with col2:
@@ -165,7 +169,7 @@ for i in st.session_state.project.keys():
 
 if st.session_state.final:
     done = "\n".join(st.session_state.final)
-    st.caption(f"Processed {st.session_state.processed} replays.")
+    st.caption(f"Processed {st.session_state.processed_formats} formats, {st.session_state.processed_replays} replays.")
     end = time.time()
     st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
