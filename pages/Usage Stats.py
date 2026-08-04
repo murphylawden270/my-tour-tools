@@ -176,9 +176,9 @@ if st.session_state.final:
     done = "\n".join(st.session_state.final)
     if done == "":
         st.error("No replays found! Please enter a replay.")
-        continue
-    st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
-    end = time.time()
-    st.caption(f"Time taken: {end - start} seconds.")
-    st.caption("BB Code:")
-    st.code(done, language=None, height=300)
+    else:
+        st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
+        end = time.time()
+        st.caption(f"Time taken: {end - start} seconds.")
+        st.caption("BB Code:")
+        st.code(done, language=None, height=300)
