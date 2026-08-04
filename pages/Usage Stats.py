@@ -121,15 +121,16 @@ def replay(key, values):
 if st.button("Add Format", icon="➕"):
     name_dialog()
 
-smol1, smol2, smol3 = st.columns([1,8,1], gap="small")
-with smol1:
-    for f, formats in enumerate(st.session_state.project):
-        with st.container(border=True):
+
+for f, formats in enumerate(st.session_state.project):
+    with st.container(border=True):
+        smol1, smol2, smol3 = st.columns([1,8,1], gap="small")
+        with smol1:
             st.text(formats)
-            links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
-            st.session_state.project[formats] = links
-with smol2:
-    st.text("AWOOOOOOO")
+        with smol3:
+            st.text("AWOOOOOOO")
+        links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
+        st.session_state.project[formats] = links    
 
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
