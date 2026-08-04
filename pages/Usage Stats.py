@@ -152,7 +152,7 @@ with col1:
 
             for key, bbcode, rl in output:
                 st.session_state.processed_replays += rl
-                st.session_state.processed_replays += 1
+                st.session_state.processed_formats += 1
                 st.session_state.all_bbcode[key] = bbcode
 
 with col2:
