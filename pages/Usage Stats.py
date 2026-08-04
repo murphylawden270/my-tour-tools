@@ -66,7 +66,7 @@ def name_dialog():
 
 def replay(key, values):
     if values = "":
-        continue
+        return key, [], 0
     rl = len(values.splitlines())
     bbcode = []
     driver = webdriver.Chrome(options=options)
