@@ -115,7 +115,8 @@ def replay(key, values):
     bbcode.append(Final)
     bbcode.append("")
 
-    return key, bbcode
+    st.session_state.all_bbcode[key] = bbcode
+    # return key, bbcode
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -135,8 +136,8 @@ with col1:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
-            for key, bbcode in output:
-                st.session_state.all_bbcode[key] = bbcode
+            # for key, bbcode in output:
+            #     st.session_state.all_bbcode[key] = bbcode
 
 with col2:
     if st.button("Clear All", use_container_width=True):
