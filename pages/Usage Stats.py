@@ -124,7 +124,7 @@ if st.button("Add Format", icon="➕"):
 
 for f, formats in enumerate(st.session_state.project):
     with st.container(border=True):
-        smol1, smol2, smol3 = st.columns([1,9,1], gap="small")
+        smol1, smol2, smol3 = st.columns([1,10,1], gap="small")
         with smol1:
             st.text(formats)
         with smol3:
