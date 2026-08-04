@@ -158,6 +158,8 @@ with col1:
                 st.session_state.processed_replays += rl
                 st.session_state.processed_formats += 1
                 st.session_state.all_bbcode[key] = bbcode
+        else:
+            st.error("No replays found! Please enter a replay.")
 
 with col2:
     if st.button("Clear All", use_container_width=True):
@@ -179,5 +181,3 @@ if st.session_state.final:
     st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
     st.code(done, language=None, height=300)
-else:
-    st.error("No replays found! Please enter a replay.")
