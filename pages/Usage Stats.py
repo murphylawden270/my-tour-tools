@@ -61,7 +61,6 @@ def name_dialog():
 
 def replay(key, values):
     rl = len(values.splitlines())
-    st.session_state.processed += rl
     bbcode = []
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
@@ -118,8 +117,9 @@ def replay(key, values):
     bbcode.append(Final)
     bbcode.append("")
 
-    return key, bbcode
+    return key, bbcode, rl
 
+st.session_state.processed += rl
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -149,7 +149,8 @@ with col1:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
 
-            for key, bbcode in output:
+            for key, bbcode, rl in output:
+                st.session_state.processed += rl
                 st.session_state.all_bbcode[key] = bbcode
 
 with col2:
