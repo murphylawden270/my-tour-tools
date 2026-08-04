@@ -64,9 +64,6 @@ def name_dialog():
                 st.session_state.project[name] = []
                 st.rerun()
 
-def triger(text):
-    st.error(text)
-
 def replay(key, values):
     if not values or values.strip() == "":
         return key, [], 0
@@ -152,7 +149,7 @@ with col1:
         st.session_state.processed_replays = 0
         st.session_state.processed_formats = 0
         if not st.session_state.project:
-            triger("No formats available! Please add a format first.")
+            st.error("No formats available! Please add a format first.")
         else:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
