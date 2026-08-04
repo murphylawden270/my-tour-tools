@@ -174,7 +174,7 @@ for i in st.session_state.project.keys():
 
 if st.session_state.final:
     done = "\n".join(st.session_state.final)
-    if done = "":
+    if done == "":
         st.error("No replays found! Please enter a replay.")
     st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
     end = time.time()
