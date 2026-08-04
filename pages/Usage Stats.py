@@ -33,9 +33,6 @@ if "processed_replays" not in st.session_state:
 if "processed_formats" not in st.session_state:
     st.session_state.processed_formats = 0
 
-if "period" not in st.session_state:
-    st.session_state.period = 0
-
 st.markdown(
     """
     <style>
