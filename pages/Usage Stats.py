@@ -173,10 +173,10 @@ for i in st.session_state.project.keys():
         st.session_state.final.append("\n".join(st.session_state.all_bbcode[i]))
 
 if st.session_state.final:
-    done = "\n".join(st.session_state.final)
-    if done == "":
+    if st.session_state.processed_replays ==0 and st.session_state.processed_formats ==0:
         st.error("No replays found! Please enter a replay.")
-    elif done != "":
+    elif st.session_state.processed_replays !=0 and st.session_state.processed_formats !=0:
+        done = "\n".join(st.session_state.final)
         st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
         end = time.time()
         st.caption(f"Time taken: {end - start} seconds.")
