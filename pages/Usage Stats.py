@@ -143,13 +143,14 @@ for f, formats in enumerate(st.session_state.project):
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links    
 
+exists = False
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
         st.session_state.processed_replays = 0
         st.session_state.processed_formats = 0
         if not st.session_state.project:
-            st.error("No formats available! Please add a format first.")
+            exists = True
         else:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
@@ -171,6 +172,9 @@ with col2:
 for i in st.session_state.project.keys():
     if i in st.session_state.all_bbcode:
         st.session_state.final.append("\n".join(st.session_state.all_bbcode[i]))
+
+if exists == True:
+    st.error("No formats available! Please add a format first.")
 
 if st.session_state.final:
     if st.session_state.processed_replays == 0:
