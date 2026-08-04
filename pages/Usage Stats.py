@@ -176,7 +176,7 @@ if st.session_state.final:
     done = "\n".join(st.session_state.final)
     st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
     end = time.time()
-    if start:
+    if 'start' in globals():
         st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
     st.code(done, language=None, height=300)
