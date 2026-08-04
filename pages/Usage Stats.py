@@ -175,6 +175,7 @@ for i in st.session_state.project.keys():
 
 if exists == True:
     st.error("No formats available! Please add a format first.")
+    exists == False
 
 if st.session_state.final:
     if st.session_state.processed_replays == 0:
