@@ -119,8 +119,6 @@ def replay(key, values):
 
     return key, bbcode, rl
 
-st.session_state.processed += rl
-
 if st.button("Add Format", icon="➕"):
     name_dialog()
 
