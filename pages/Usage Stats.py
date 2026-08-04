@@ -1,7 +1,5 @@
 import time
 
-start = time.time()
-
 import streamlit as st
 import re
 
@@ -26,6 +24,9 @@ if "all_bbcode" not in st.session_state:
 
 if "final" not in st.session_state:
     st.session_state.final = []
+
+if "processed" not in st.session_state:
+    st.session_state.processed = 0
 
 st.markdown(
     """
@@ -59,6 +60,8 @@ def name_dialog():
                 st.rerun()
 
 def replay(key, values):
+    rl = len(values.splitlines())
+    st.session_state.processed += rl
     bbcode = []
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
@@ -124,21 +127,22 @@ if st.button("Add Format", icon="➕"):
 
 for f, formats in enumerate(st.session_state.project):
     with st.container(border=True):
-        smol1, smol2, smol3 = st.columns([1,12,1], gap="small")
+        smol1, smol2, smol3 = st.columns([1,8,1], gap="small")
         with smol1:
             st.text(formats)
         with smol3:
-                if st.button("❌", key=f"delete_{f}"):
-                    del st.session_state.project[formats]
-                    if formats in st.session_state.all_bbcode:
-                        del st.session_state.all_bbcode[formats]
-                    st.rerun()
+            if st.button("❌", key=f"delete_{f}"):
+                del st.session_state.project[formats]
+                if formats in st.session_state.all_bbcode:
+                    del st.session_state.all_bbcode[formats]
+                st.rerun()
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links    
 
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
+        start = time.time()
         if not st.session_state.project:
             st.error("No formats available! Please add a format first.")
         else:
@@ -153,6 +157,7 @@ with col2:
         st.session_state.project.clear()
         st.session_state.all_bbcode.clear()
         st.session_state.final.clear()
+        st.session_state.processed = 0
         st.rerun()
 
 for i in st.session_state.project.keys():
@@ -161,6 +166,7 @@ for i in st.session_state.project.keys():
 
 if st.session_state.final:
     done = "\n".join(st.session_state.final)
+    st.caption(f"Processed {st.session_state.processed} replays.")
     end = time.time()
     st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
