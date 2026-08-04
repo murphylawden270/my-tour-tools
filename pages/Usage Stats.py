@@ -113,14 +113,20 @@ def replay(key, values):
 
     all_bbcode[key] = bbcode
 
-if st.button("Add Format", icon="➕"):
-    name_dialog()
-
-for f, formats in enumerate(st.session_state.project):
-    with st.container(border=True):
-        st.text(formats)
-        links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
-        st.session_state.project[formats] = links
+col1, col2, col3 = ([1,1,5], gap="small")
+with col1:
+    if st.button("Add Format", icon="➕"):
+        name_dialog()
+    
+    for f, formats in enumerate(st.session_state.project):
+        with st.container(border=True):
+            st.text(formats)
+            links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
+            st.session_state.project[formats] = links
+with col2:
+    if st.button("Clear All"):
+        st.session_state.project.clear()
+        st.rerun()
 
 if st.button("Generate"):
     if not st.session_state.project:
