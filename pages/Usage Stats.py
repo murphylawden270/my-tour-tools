@@ -187,8 +187,8 @@ if st.session_state.final:
         st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
         end = time.time()
         final_time = end - start
-        st.session_state.period = final_time
         if st.session_state.processed_replays != 0:
+            st.session_state.period = final_time
             st.caption(f"Time taken: {end - start} seconds.")
         else:
             st.caption(f"Time taken: {st.session_state.period} seconds.")
