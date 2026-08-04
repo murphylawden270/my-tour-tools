@@ -179,3 +179,5 @@ if st.session_state.final:
     st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
     st.code(done, language=None, height=300)
+else:
+    st.error("No replays found! Please enter a replay.")
