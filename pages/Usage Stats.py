@@ -1,6 +1,6 @@
 import time
 
-start = time.time()
+# start = time.time()
 
 import streamlit as st
 import re
