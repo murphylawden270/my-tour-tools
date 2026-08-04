@@ -1,5 +1,7 @@
 import time
 
+start = time.time()
+
 import streamlit as st
 import re
 
@@ -143,7 +145,8 @@ for f, formats in enumerate(st.session_state.project):
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
-        start = time.time()
+        st.session_state.processed_replays = 0
+        st.session_state.processed_formats = 0
         if not st.session_state.project:
             st.error("No formats available! Please add a format first.")
         else:
@@ -160,7 +163,8 @@ with col2:
         st.session_state.project.clear()
         st.session_state.all_bbcode.clear()
         st.session_state.final.clear()
-        st.session_state.processed = 0
+        st.session_state.processed_replays = 0
+        st.session_state.processed_formats = 0
         st.rerun()
 
 for i in st.session_state.project.keys():
@@ -169,7 +173,7 @@ for i in st.session_state.project.keys():
 
 if st.session_state.final:
     done = "\n".join(st.session_state.final)
-    st.caption(f"Processed {st.session_state.processed_formats} formats, {st.session_state.processed_replays} replays.")
+    st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
     end = time.time()
     st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
