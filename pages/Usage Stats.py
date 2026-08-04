@@ -33,6 +33,9 @@ if "processed_replays" not in st.session_state:
 if "processed_formats" not in st.session_state:
     st.session_state.processed_formats = 0
 
+if "period" not in st.session_state:
+    st.session_state.period = 0
+
 st.markdown(
     """
     <style>
@@ -183,6 +186,11 @@ if st.session_state.final:
         done = "\n".join(st.session_state.final)
         st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
         end = time.time()
-        st.caption(f"Time taken: {end - start} seconds.")
+        final_time = end - start
+        st.session_state.period = final_time
+        if st.session_state.processed_replays != 0:
+            st.caption(f"Time taken: {end - start} seconds.")
+        else:
+            st.caption(f"Time taken: {st.session_state.period} seconds.")
         st.caption("BB Code:")
         st.code(done, language=None, height=300)
