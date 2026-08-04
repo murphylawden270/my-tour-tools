@@ -113,7 +113,7 @@ def replay(key, values):
 
     all_bbcode[key] = bbcode
 
-col1, col2, col3 = ([1,1,5], gap="small")
+col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Add Format", icon="➕"):
         name_dialog()
