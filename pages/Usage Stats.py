@@ -65,7 +65,7 @@ def name_dialog():
                 st.rerun()
 
 def replay(key, values):
-    if values = "":
+    if not values or values.strip() == "":
         return key, [], 0
     rl = len(values.splitlines())
     bbcode = []
@@ -128,7 +128,6 @@ def replay(key, values):
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
-
 
 for f, formats in enumerate(st.session_state.project):
     with st.container(border=True):
