@@ -47,8 +47,6 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
 
-all_bbcode = {}
-
 @st.dialog("Format Name")
 def name_dialog():
     name = st.text_input("Enter Your Format Name:")
@@ -117,7 +115,7 @@ def replay(key, values):
     bbcode.append(Final)
     bbcode.append("")
 
-    all_bbcode[key] = bbcode
+    st.session_state.all_bbcode[key] = bbcode
 
 if st.button("Add Format", icon="➕"):
     name_dialog()
@@ -146,7 +144,7 @@ for i in st.session_state.project.keys():
     if i in st.session_state.all_bbcode:
         st.session_state.final.append("\n".join(st.session_state.all_bbcode[i]))
 
-if st.session_state.final:
+if st.session_state.final.keys():
     done = "\n".join(st.session_state.final)
     end = time.time()
     st.caption(f"Time taken: {end - start} seconds.")
