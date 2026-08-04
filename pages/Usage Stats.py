@@ -128,7 +128,11 @@ for f, formats in enumerate(st.session_state.project):
         with smol1:
             st.text(formats)
         with smol3:
-            st.text("AWOOOOOOO")
+                if st.button("❌", key=f"delete_{f}"):
+                    del st.session_state.project[formats]
+                    if formats in st.session_state.all_bbcode:
+                        del st.session_state.all_bbcode[formats]
+                    st.rerun()
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links    
 
