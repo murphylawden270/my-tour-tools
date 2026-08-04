@@ -145,6 +145,7 @@ for f, formats in enumerate(st.session_state.project):
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
+        start = time.time()
         st.session_state.processed_replays = 0
         st.session_state.processed_formats = 0
         if not st.session_state.project:
@@ -175,7 +176,6 @@ if st.session_state.final:
     done = "\n".join(st.session_state.final)
     st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
     end = time.time()
-    if st.session_state.processed_replays != 0 and st.session_state.processed_formats != 0:
-        st.caption(f"Time taken: {end - start} seconds.")
+    st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
     st.code(done, language=None, height=300)
