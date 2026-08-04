@@ -1,6 +1,6 @@
 import time
 
-# start = time.time()
+start = time.time()
 
 import streamlit as st
 import re
@@ -32,9 +32,6 @@ if "processed_replays" not in st.session_state:
 
 if "processed_formats" not in st.session_state:
     st.session_state.processed_formats = 0
-
-if "start" not in st.session_state:
-    st.session_state.start = time.time()
 
 st.markdown(
     """
@@ -178,6 +175,6 @@ if st.session_state.final:
     done = "\n".join(st.session_state.final)
     st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
     end = time.time()
-    st.caption(f"Time taken: {end - st.session_state.start} seconds.")
+    st.caption(f"Time taken: {end - start} seconds.")
     st.caption("BB Code:")
     st.code(done, language=None, height=300)
