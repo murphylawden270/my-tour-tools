@@ -1,6 +1,5 @@
-streamlit==1.45.0
+streamlit>=1.61.0
 requests
 selenium
 webdriver-manager
 PyGithub
-requests
