@@ -120,7 +120,7 @@ def checkreplay(i):
 with st.expander("Prerequisites:", expanded=True):
     set1, set2 = st.columns(([1,1]), gap="small", border=True)
     with set1:
-        st.text("Just remember, I know everytime YOU use this.")
+        st.text("Just remember, I know everytime YOU use this.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel me to reach out.")
         st.session_state.smogon_name = st.text_input("Smogon Name *:", width=500)
         st.session_state.tournament_name = st.text_input("Project Name *:", width=500)
         st.session_state.round_name = st.text_input("Round Name (for Tournaments ONLY):", width=500)
@@ -342,7 +342,7 @@ with col1:
                     )
                     delay = random.uniform(0, 3.0)
                     time.sleep(delay)
-                st.session_state.send = f"{st.session_state.ip} has created <https://github.com/LapplandO7/team-tour-stats-uploads/tree/main/{st.session_state.foldername}>."
+                st.session_state.send = f"{st.session_state.ip} created <https://github.com/LapplandO7/team-tour-stats-uploads/tree/main/{st.session_state.foldername}>."
                 murphy = {
                     "content" : st.session_state.send
                 }
