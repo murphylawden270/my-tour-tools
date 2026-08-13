@@ -120,7 +120,7 @@ def checkreplay(i):
 with st.expander("Prerequisites:", expanded=True):
     set1, set2 = st.columns(([1,1]), gap="small", border=True)
     with set1:
-        st.text("Just remember, I know everytime YOU use this. PLEASE READ THE NOTE.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel me to reach out.")
+        st.text("Just remember, I know everytime YOU use this. PLEASE READ THE NOTE.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel free to reach out to me.")
         st.session_state.smogon_name = st.text_input("Smogon Name *:", width=500)
         st.session_state.tournament_name = st.text_input("Project Name *:", width=500)
         st.session_state.round_name = st.text_input("Round Name (for Tournaments ONLY):", width=500)
