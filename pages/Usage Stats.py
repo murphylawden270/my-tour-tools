@@ -1,7 +1,6 @@
 import streamlit as st
 
 import re
-import sys
 from num2words import num2words
 import time
 
