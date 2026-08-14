@@ -345,7 +345,7 @@ with col1:
                     st.session_state.processed_formats += 1
                     st.session_state.filedesc.update(filedesc)
                     st.session_state.all_bbcode[key] = Final
-                    st.session_state.colorrl += l
+                    st.session_state.colorrl += 1
 
                 send = Github(auth=Auth.Token(lappland)).get_repo(f"LapplandO7/team-tour-stats-uploads")
 
