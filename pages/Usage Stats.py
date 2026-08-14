@@ -273,7 +273,7 @@ def usages(key, values, foldernameft):
 
     if optinft == True:
         if colorrlft <= len(color):
-            Final = main[0].replace("-*.png",".png").replace("???", f"[B][COLOR={color[colorrl]}][SIZE=6]{key}[/SIZE][/COLOR][/B]").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
+            Final = main[0].replace("-*.png",".png").replace("???", f"[B][COLOR={color[colorrlft]}][SIZE=6]{key}[/SIZE][/COLOR][/B]").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
             colorrl += 1
         else:
             Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
