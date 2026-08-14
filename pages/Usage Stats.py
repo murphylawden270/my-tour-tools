@@ -297,7 +297,7 @@ tourname = True
 exists = True
 # col1, col2, col3 = st.columns([1,1,5], gap="small")
 # with col1:
-if st.button("Compile", width=100):
+if st.button("Compile", width=200):
     st.session_state.ip = st.context.ip_address
     if st.session_state.ip in ips:
         allowed = False
