@@ -371,6 +371,7 @@ with col2:
     if st.button("Clear All", use_container_width=True):
         st.session_state.replays.clear()
         st.session_state.all_bbcode.clear()
+        st.session_state.tournament_name = ""
         st.rerun()
 
 if allowed == False:
