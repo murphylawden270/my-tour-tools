@@ -389,7 +389,7 @@ if exists == False:
 
 st.session_state.final = []
 if st.session_state.optin == True:
-    st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.capitalize()} Usage[/SIZE][/COLOR][/B]")
+    st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.title()} Usage[/SIZE][/COLOR][/B]")
     st.session_state.final.append("")
 if st.session_state.all_bbcode:
     for i in st.session_state.replays.keys():
