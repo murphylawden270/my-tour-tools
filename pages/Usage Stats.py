@@ -338,7 +338,7 @@ with col1:
                 aft = st.session_state.a
                 optinft = st.session_state.optin
                 with ThreadPoolExecutor(max_workers=4) as executor:
-                    output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder), st.session_state.colorrl))
+                    output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder), itertools.repeat(st.session_state.colorrl)))
                 st.session_state.filedesc = {}
                 for key, Final, filedesc, rl in output:
                     st.session_state.processed_replays += rl
