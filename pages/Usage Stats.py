@@ -372,6 +372,7 @@ with col2:
         st.session_state.replays.clear()
         st.session_state.all_bbcode.clear()
         st.session_state.tournament_name = ""
+        st.session_state.round_name = ""
         st.rerun()
 
 if allowed == False:
