@@ -393,17 +393,18 @@ st.session_state.final = []
 if st.session_state.optin == True:
     st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.capitalize()} Usage[/SIZE][/COLOR]")
     st.session_state.final.append("")
-for i in st.session_state.replays.keys():
-    if i in st.session_state.all_bbcode:
-        st.session_state.final.append(st.session_state.all_bbcode[i])
-        st.session_state.final.append("")
+if st.session_state.all_bbcode:
+    for i in st.session_state.replays.keys():
+        if i in st.session_state.all_bbcode:
+            st.session_state.final.append(st.session_state.all_bbcode[i])
+            st.session_state.final.append("")
 
-if st.session_state.final:
-    done = "\n".join(st.session_state.final)
-    st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
-    if "start" in st.session_state and st.session_state.start is not None:
-        if "complete" not in st.session_state:
-            st.session_state.complete = time.time() - st.session_state.start
-        st.caption(f"Time taken: {st.session_state.complete} seconds.")
-    st.caption("BB Code:")
-    st.code(done, language=None, height=300)
+    if st.session_state.final:
+        done = "\n".join(st.session_state.final)
+        st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
+        if "start" in st.session_state and st.session_state.start is not None:
+            if "complete" not in st.session_state:
+                st.session_state.complete = time.time() - st.session_state.start
+            st.caption(f"Time taken: {st.session_state.complete} seconds.")
+        st.caption("BB Code:")
+        st.code(done, language=None, height=300))
