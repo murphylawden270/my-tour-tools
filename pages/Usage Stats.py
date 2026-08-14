@@ -132,8 +132,8 @@ with st.expander("Prerequisites:", expanded=True):
     with set1:
         st.text("Just remember, I know everytime YOU use this.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel me to reach out. Every website you visit knows you IP address.")
         st.session_state.smogon_name = st.text_input("Smogon Name *:", help="This field is mandatory. Please use your actual Smogon name, it's necessary for proper logging, but I can't really verify this so I am trusting you.", width=500)
-        st.session_state.tournament_name = st.text_input("Project Name *:", help="This field is mandatory. Enter the full name of the project like NDPL VII or ORAS OU Tournament-Based Tiering.", key="tournament_name", width=500)
-        st.session_state.round_name = st.text_input("Round Name (for Tournaments ONLY):", help="Enter the full round name like Week 1 or Round One. Useful for you if you are making tournament stats.", key="round_name", width=500)
+        st.text_input("Project Name *:", help="This field is mandatory. Enter the full name of the project like NDPL VII or ORAS OU Tournament-Based Tiering.", key="tournament_name", width=500)
+        st.text_input("Round Name (for Tournaments ONLY):", help="Enter the full round name like Week 1 or Round One. Useful for you if you are making tournament stats.", key="round_name", width=500)
     with set2:
         st.text("Additional Settings:")
         makepost = st.checkbox("Make it a Post", value=True, help="Output akin to [tournament usage stats](https://www.smogon.com/forums/threads/oraspl-vi-replays-and-usage-stats.3785250/post-11060712) with colors added for up to 15 format name and a title.")
