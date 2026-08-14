@@ -73,6 +73,9 @@ if "send" not in st.session_state:
 if "start" not in st.session_state:
     st.session_state.start = None
 
+if "colorrl" not in st.session_state:
+    st.session_state.colorrl = 0
+
 if "processed_replays" not in st.session_state:
     st.session_state.processed_replays = 0
 
@@ -177,7 +180,6 @@ for f, formats in enumerate(st.session_state.replays):
 color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
 def usages(key, values, foldernameft):
     rl = len(values.splitlines())
-    colorrl = 0
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
     
@@ -277,7 +279,7 @@ def usages(key, values, foldernameft):
     else:
         Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
 
-    return key, Final, filedesc, rl
+    return key, Final, filedesc, rl, 1
 
 myname = st.secrets['myname']
 myrealname = st.secrets['myrealname']
@@ -336,14 +338,16 @@ with col1:
                 st.session_state.a = st.session_state.a[:-3]
                 aft = st.session_state.a
                 optinft = st.session_state.optin
+                colorrlft = st.session_state.colorrl
                 with ThreadPoolExecutor(max_workers=4) as executor:
                     output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder)))
                 st.session_state.filedesc = {}
-                for key, Final, filedesc, rl in output:
+                for key, Final, filedesc, rl, l in output:
                     st.session_state.processed_replays += rl
                     st.session_state.processed_formats += 1
                     st.session_state.filedesc.update(filedesc)
                     st.session_state.all_bbcode[key] = Final
+                    colorrl += l
 
                 send = Github(auth=Auth.Token(lappland)).get_repo(f"LapplandO7/team-tour-stats-uploads")
 
