@@ -178,9 +178,8 @@ for f, formats in enumerate(st.session_state.replays):
                 st.rerun()
 
 color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
-def usages(key, values, foldernameft):
+def usages(key, values, foldernameft, colorrl):
     rl = len(values.splitlines())
-    l = 1
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
     
@@ -272,15 +271,14 @@ def usages(key, values, foldernameft):
             url.append(file)
 
     if optinft == True:
-        if colorrlft <= len(color):
-            Final = main[0].replace("-*.png",".png").replace("???", f"[B][COLOR={color[colorrlft]}][SIZE=6]{key}[/SIZE][/COLOR][/B]").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
-            colorrl += 1
+        if colorrl <= len(color):
+            Final = main[0].replace("-*.png",".png").replace("???", f"[B][COLOR={color[colorrl]}][SIZE=6]{key}[/SIZE][/COLOR][/B]").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
         else:
             Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
     else:
         Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
 
-    return key, Final, filedesc, rl, 1
+    return key, Final, filedesc, rl
 
 myname = st.secrets['myname']
 myrealname = st.secrets['myrealname']
@@ -339,16 +337,15 @@ with col1:
                 st.session_state.a = st.session_state.a[:-3]
                 aft = st.session_state.a
                 optinft = st.session_state.optin
-                colorrlft = st.session_state.colorrl
                 with ThreadPoolExecutor(max_workers=4) as executor:
-                    output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder)))
+                    output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder), st.session_state.colorrl))
                 st.session_state.filedesc = {}
-                for key, Final, filedesc, rl, l in output:
+                for key, Final, filedesc, rl in output:
                     st.session_state.processed_replays += rl
                     st.session_state.processed_formats += 1
                     st.session_state.filedesc.update(filedesc)
                     st.session_state.all_bbcode[key] = Final
-                    colorrl += l
+                    st.session_state.colorrl += l
 
                 send = Github(auth=Auth.Token(lappland)).get_repo(f"LapplandO7/team-tour-stats-uploads")
 
