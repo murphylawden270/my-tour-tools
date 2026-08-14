@@ -407,4 +407,4 @@ if st.session_state.all_bbcode:
                 st.session_state.complete = time.time() - st.session_state.start
             st.caption(f"Time taken: {st.session_state.complete} seconds.")
         st.caption("BB Code:")
-        st.code(done, language=None, height=300))
+        st.code(done, language=None, height=300)
