@@ -120,10 +120,11 @@ def checkreplay(i):
     if i.startswith("https://replay.pokemonshowdown.com/"):
         return i
 
-
 if st.button("Clear All", use_container_width=True):
     st.session_state.replays.clear()
     st.session_state.all_bbcode.clear()
+    st.session_state.tournament_name = ""
+    st.session_state.round_name = ""
     st.rerun()
 
 with st.expander("Prerequisites:", expanded=True):
