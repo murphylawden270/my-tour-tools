@@ -180,6 +180,7 @@ for f, formats in enumerate(st.session_state.replays):
 color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
 def usages(key, values, foldernameft):
     rl = len(values.splitlines())
+    l = 1
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
     
