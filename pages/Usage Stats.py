@@ -40,6 +40,9 @@ if "additional_usage" not in st.session_state:
 if "round_name" not in st.session_state:
     st.session_state.round_name = ""
 
+if "optin" not in st.session_state:
+    st.session_state.optin = True
+
 if "spoiler" not in st.session_state:
     st.session_state.spoiler = False
 
@@ -120,12 +123,17 @@ def checkreplay(i):
 with st.expander("Prerequisites:", expanded=True):
     set1, set2 = st.columns(([1,1]), gap="small", border=True)
     with set1:
-        st.text("Just remember, I know everytime YOU use this. PLEASE READ THE NOTE.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel free to reach out to me.")
-        st.session_state.smogon_name = st.text_input("Smogon Name *:", width=500)
-        st.session_state.tournament_name = st.text_input("Project Name *:", width=500)
-        st.session_state.round_name = st.text_input("Round Name (for Tournaments ONLY):", width=500)
+        st.text("Just remember, I know everytime YOU use this.", help="Your IP address is sent to me through Discord everytime a folder gets uploaded to the GitHub repository. This allows to stop someone from intentionally spamming. If you are uncomforatable to use this tool knowing about this, don't use this tool or feel me to reach out. Every website you visit knows you IP address.")
+        st.session_state.smogon_name = st.text_input("Smogon Name *:", help="This field is mandatory. Please use your actual Smogon name, it's necessary for proper logging, but I can't really verify this so I am trusting you.", width=500)
+        st.session_state.tournament_name = st.text_input("Project Name *:", help="This field is mandatory. Enter the full name of the project like NDPL VII or ORAS OU Tournament-Based Tiering.", width=500)
+        st.session_state.round_name = st.text_input("Round Name (for Tournaments ONLY):", help="Enter the full round name like Week 1 or Round One. Useful for you if you are making tournament stats.", width=500)
     with set2:
         st.text("Additional Settings:")
+        makepost = st.checkbox("Make it a Post", value=True, help="Output akin to [tournament usage stats](https://www.smogon.com/forums/threads/oraspl-vi-replays-and-usage-stats.3785250/post-11060712) with colors added for up to 15 format name and a title.")
+        if makepost:
+            st.session_state.optin = True
+        else:
+            st.session_state.optin = False
         st.text("Usage Type:")        
         spoiler = st.checkbox("Spoiler")
         if spoiler:
@@ -168,9 +176,11 @@ for f, formats in enumerate(st.session_state.replays):
 
 def usages(key, values, foldernameft):
     rl = len(values.splitlines())
+    color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
+    colorrl = 0
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
-
+    
     Replay_urls = driver.find_element(By.NAME, "replay_urls")
     driver.execute_script("arguments[0].value = arguments[1];", Replay_urls, values)
     driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", Replay_urls)
@@ -258,7 +268,14 @@ def usages(key, values, foldernameft):
         if i != 0:
             url.append(file)
 
-    Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
+    if optinft == True:
+        if colorrl <= len(color):
+            Final = main[0].replace("-*.png",".png").replace("???", f"[B][COLOR={color[colorrl]}][SIZE=6]{key}[/SIZE][/COLOR][/B]").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
+            colorrl += 1
+        else:
+            Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
+    else:
+        Final = main[0].replace("-*.png",".png").replace("???", f"{key}").replace("mats", f"{url[0]}").replace("cmbs", f"{url[1]}").replace("lds", f"{url[2]}")
 
     return key, Final, filedesc, rl
 
@@ -318,6 +335,7 @@ with col1:
                     st.session_state.a += " | "
                 st.session_state.a = st.session_state.a[:-3]
                 aft = st.session_state.a
+                optinft = st.session_state.optin
                 with ThreadPoolExecutor(max_workers=4) as executor:
                     output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder)))
                 st.session_state.filedesc = {}
@@ -372,6 +390,9 @@ if exists == False:
     st.error("No formats or replays available! Please add a format and replays first.")
 
 st.session_state.final = []
+if st.session_state.optin == True:
+    st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.capitalize()} Usage[/SIZE][/COLOR]")
+    st.session_state.final.append("")
 for i in st.session_state.replays.keys():
     if i in st.session_state.all_bbcode:
         st.session_state.final.append(st.session_state.all_bbcode[i])
