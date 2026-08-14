@@ -174,9 +174,9 @@ for f, formats in enumerate(st.session_state.replays):
                     del st.session_state.all_bbcode[formats]
                 st.rerun()
 
+color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
 def usages(key, values, foldernameft):
     rl = len(values.splitlines())
-    color = ["#9370db","#008080","#ffa500","#e25041","#1abc9c","#f37934","#fac51c","#2969b0","#7c706b","#a61c00","#ff00ff","#134f5c","#534042","#9d66bd","#ffff00"]
     colorrl = 0
     driver = webdriver.Chrome(options=options)
     driver.get('https://replaystats-eo.herokuapp.com/')
@@ -391,7 +391,7 @@ if exists == False:
 
 st.session_state.final = []
 if st.session_state.optin == True:
-    st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.capitalize()} Usage[/SIZE][/COLOR]")
+    st.session_state.final.append(f"[B][COLOR=rgb(160, 32, 240)][SIZE=7]{st.session_state.round_name.capitalize()} Usage[/SIZE][/COLOR][/B]")
     st.session_state.final.append("")
 if st.session_state.all_bbcode:
     for i in st.session_state.replays.keys():
