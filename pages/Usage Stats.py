@@ -120,12 +120,12 @@ def checkreplay(i):
     if i.startswith("https://replay.pokemonshowdown.com/"):
         return i
 
-# if st.button("Clear All", use_container_width=True):
-#     st.session_state.replays.clear()
-#     st.session_state.all_bbcode.clear()
-#     st.session_state.tournament_name = ""
-#     st.session_state.round_name = ""
-#     st.rerun()
+if st.button("Clear All", use_container_width=True):
+    st.session_state.replays.clear()
+    st.session_state.all_bbcode.clear()
+    st.session_state.tournament_name = ""
+    st.session_state.round_name = ""
+    st.rerun()
 
 with st.expander("Prerequisites:", expanded=True):
     set1, set2 = st.columns(([1,1]), gap="small", border=True)
@@ -295,91 +295,91 @@ notmyrealname = True
 notmylap = True
 tourname = True
 exists = True
-col1, col2, col3 = st.columns([1,1,5], gap="small")
-with col1:
-    if st.button("Compile", use_container_width=True):
-        st.session_state.ip = st.context.ip_address
-        if st.session_state.ip in ips:
-            allowed = False
-        elif st.session_state.smogon_name == "":
-            addname = False
-        elif st.session_state.smogon_name.lower().replace(" ","") in myname:
-            notmyname = False
-        elif st.session_state.smogon_name.lower().replace(" ","") in myrealname:
-            notmyrealname = False
-        elif st.session_state.smogon_name.lower().replace(" ","") in mylap:
-            notmylap = False
-        elif st.session_state.tournament_name == "":
-            tourname = False
-        elif not st.session_state.replays:
-            exists = False
-        else:
-            st.session_state.processed_replays = 0
-            st.session_state.processed_formats = 0
-            st.session_state.all_bbcode = {}
-            st.session_state.start = time.time()
-            spoilerft = st.session_state.spoiler
-            tourft = st.session_state.tournament_name
-            roundft = st.session_state.round_name
-            with tempfile.TemporaryDirectory() as td:
-                st.session_state.ftime = datetime.now().strftime("%Y%m%d-%H%M%S")
-                if st.session_state.round_name != "":
-                    st.session_state.foldername = f"{st.session_state.tournament_name.lower().replace(" ","")}-{st.session_state.round_name.lower().replace(" ","")}-{st.session_state.smogon_name.lower().replace(" ","")}-{st.session_state.ftime}"
-                else:
-                    st.session_state.foldername = f"{st.session_state.tournament_name.lower().replace(" ","")}-{st.session_state.smogon_name.lower().replace(" ","")}-{st.session_state.ftime}"
-                st.session_state.folder = Path(td)/st.session_state.foldername
-                st.session_state.folder.mkdir(parents=True, exist_ok=True)
-                st.session_state.a = ""
-                for z in st.session_state.additional_usage:
-                    if z == "Moves and Teammates":
-                        st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/mats']{z}[/URL]"
-                    elif z == "Combos":
-                        st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/cmbs']{z}[/URL]"
-                    elif z == "Leads":
-                        st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/lds']{z}[/URL]"
-                    st.session_state.a += " | "
-                st.session_state.a = st.session_state.a[:-3]
-                aft = st.session_state.a
-                optinft = st.session_state.optin
-                with ThreadPoolExecutor(max_workers=4) as executor:
-                    output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder), itertools.count(start=0, step=1)))
-                st.session_state.filedesc = {}
-                for key, Final, filedesc, rl in output:
-                    st.session_state.processed_replays += rl
-                    st.session_state.processed_formats += 1
-                    st.session_state.filedesc.update(filedesc)
-                    st.session_state.all_bbcode[key] = Final
-                    
-                send = Github(auth=Auth.Token(lappland)).get_repo(f"LapplandO7/team-tour-stats-uploads")
-    
-                for i in st.session_state.folder.iterdir():
-                    content = i.read_text(encoding="utf-8")
-    
-                    path = f"{st.session_state.foldername}/{i.name}"
-                    
-                    send.create_file(
-                        path=path,
-                        message=f"{st.session_state.filedesc[i.name]}",
-                        content=content,
-                        branch="main"
-                    )
-                    delay = random.uniform(0, 3.0)
-                    time.sleep(delay)
-                st.session_state.send = f"{st.session_state.ip} created <https://github.com/LapplandO7/team-tour-stats-uploads/tree/main/{st.session_state.foldername}>."
-                murphy = {
-                    "content" : st.session_state.send
-                }
-                headers = {
-                    "Authorization" : authorization
-                }
-                res = requests.post(discord, murphy, headers=headers)
-with col2:
-    if st.button("Clear All", use_container_width=True):
-        st.session_state.replays.clear()
-        st.session_state.all_bbcode.clear()
-        st.session_state.tournament_name = ""
-        st.session_state.round_name = ""
-        st.rerun()
+# col1, col2, col3 = st.columns([1,1,5], gap="small")
+# with col1:
+if st.button("Compile"):
+    st.session_state.ip = st.context.ip_address
+    if st.session_state.ip in ips:
+        allowed = False
+    elif st.session_state.smogon_name == "":
+        addname = False
+    elif st.session_state.smogon_name.lower().replace(" ","") in myname:
+        notmyname = False
+    elif st.session_state.smogon_name.lower().replace(" ","") in myrealname:
+        notmyrealname = False
+    elif st.session_state.smogon_name.lower().replace(" ","") in mylap:
+        notmylap = False
+    elif st.session_state.tournament_name == "":
+        tourname = False
+    elif not st.session_state.replays:
+        exists = False
+    else:
+        st.session_state.processed_replays = 0
+        st.session_state.processed_formats = 0
+        st.session_state.all_bbcode = {}
+        st.session_state.start = time.time()
+        spoilerft = st.session_state.spoiler
+        tourft = st.session_state.tournament_name
+        roundft = st.session_state.round_name
+        with tempfile.TemporaryDirectory() as td:
+            st.session_state.ftime = datetime.now().strftime("%Y%m%d-%H%M%S")
+            if st.session_state.round_name != "":
+                st.session_state.foldername = f"{st.session_state.tournament_name.lower().replace(" ","")}-{st.session_state.round_name.lower().replace(" ","")}-{st.session_state.smogon_name.lower().replace(" ","")}-{st.session_state.ftime}"
+            else:
+                st.session_state.foldername = f"{st.session_state.tournament_name.lower().replace(" ","")}-{st.session_state.smogon_name.lower().replace(" ","")}-{st.session_state.ftime}"
+            st.session_state.folder = Path(td)/st.session_state.foldername
+            st.session_state.folder.mkdir(parents=True, exist_ok=True)
+            st.session_state.a = ""
+            for z in st.session_state.additional_usage:
+                if z == "Moves and Teammates":
+                    st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/mats']{z}[/URL]"
+                elif z == "Combos":
+                    st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/cmbs']{z}[/URL]"
+                elif z == "Leads":
+                    st.session_state.a += f"[URL='https://raw.githubusercontent.com/LapplandO7/team-tour-stats-uploads/refs/heads/main/{st.session_state.foldername}/lds']{z}[/URL]"
+                st.session_state.a += " | "
+            st.session_state.a = st.session_state.a[:-3]
+            aft = st.session_state.a
+            optinft = st.session_state.optin
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                output = list(executor.map(usages, st.session_state.replays.keys(), st.session_state.replays.values(), itertools.repeat(st.session_state.folder), itertools.count(start=0, step=1)))
+            st.session_state.filedesc = {}
+            for key, Final, filedesc, rl in output:
+                st.session_state.processed_replays += rl
+                st.session_state.processed_formats += 1
+                st.session_state.filedesc.update(filedesc)
+                st.session_state.all_bbcode[key] = Final
+                
+            send = Github(auth=Auth.Token(lappland)).get_repo(f"LapplandO7/team-tour-stats-uploads")
+
+            for i in st.session_state.folder.iterdir():
+                content = i.read_text(encoding="utf-8")
+
+                path = f"{st.session_state.foldername}/{i.name}"
+                
+                send.create_file(
+                    path=path,
+                    message=f"{st.session_state.filedesc[i.name]}",
+                    content=content,
+                    branch="main"
+                )
+                delay = random.uniform(0, 3.0)
+                time.sleep(delay)
+            st.session_state.send = f"{st.session_state.ip} created <https://github.com/LapplandO7/team-tour-stats-uploads/tree/main/{st.session_state.foldername}>."
+            murphy = {
+                "content" : st.session_state.send
+            }
+            headers = {
+                "Authorization" : authorization
+            }
+            res = requests.post(discord, murphy, headers=headers)
+# with col2:
+#     if st.button("Clear All", use_container_width=True):
+#         st.session_state.replays.clear()
+#         st.session_state.all_bbcode.clear()
+#         st.session_state.tournament_name = ""
+#         st.session_state.round_name = ""
+#         st.rerun()
 
 if allowed == False:
     st.error("Access Denied!")
