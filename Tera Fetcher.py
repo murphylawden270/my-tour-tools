@@ -29,9 +29,6 @@ st.title("Tera Fetcher Tool For Usage Stats:")
 if "replays" not in st.session_state:
     st.session_state.replays = ""
 
-if "lock" not in st.session_state:
-    st.session_state.lock = threading.Lock()
-
 if "final_bbcode" not in st.session_state:
     st.session_state.final_bbcode = ""
 
@@ -75,12 +72,13 @@ def fetch_tera(replay):
         return
     if "|rule|Terastal Clause: You cannot Terastallize" in a.text:
         return
+    lock = threading.Lock()
     b = re.findall(r'(\|-terastallize\|.*: .*)', a.text)
     if len(b) == 1:
-        with st.session_state.lock:
+        with lock:
             st.session_state.no_tera += 1
     elif len(b) == 0:
-        with st.session_state.lock:
+        with lock:
             st.session_state.no_tera += 2
 
     for i in b:
@@ -90,7 +88,7 @@ def fetch_tera(replay):
         for j in reversed(c[0].splitlines()):
             if re.match(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j):
                 f = re.findall(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j)
-                with st.session_state.lock:
+                with lock:
                     if f[0].strip() not in st.session_state.tera:
                         st.session_state.tera[f[0].strip()] = []
                     st.session_state.tera[f[0].strip()].append(e[1].strip())
@@ -107,7 +105,7 @@ if st.button("Fetch"):
         st.session_state.processed_replay = 0
 
     with ThreadPoolExecutor(max_workers=50) as executor:
-        list(executor.map(fetch_tera, st.session_state.replays.splitlines(), itertools.repeat(st.session_state.tera), itertools.repeat(st.session_state.no_tera), itertools.repeat(st.session_state.lock)))
+        list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
 
     header = '''[TABLE width="100%"]
 [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
