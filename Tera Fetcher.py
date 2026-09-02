@@ -102,7 +102,7 @@ if st.button("Fetch"):
         list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
 
     header = '''[TABLE width="100%"]
-    [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
+[TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
     st.session_state.table.append(header)
 
     st.session_state.sorted_tera = {keys : values for keys, values in sorted(st.session_state.tera.items(), key = lambda item: len(item[1]), reverse=True)}
@@ -118,7 +118,7 @@ if st.button("Fetch"):
         st.session_state.table.append(row)
 
     closer = f'''[TR][TD width="33.3333%"]No Tera[/TD][TD width="10%"]{st.session_state.no_tera}[/TD][TD width="33.3333%"][/TD][/TR]
-    [/TABLE]'''
+[/TABLE]'''
     st.session_state.table.append(closer)
 
     st.session_state.final_bbcode = "\n".join(st.session_state.table)
