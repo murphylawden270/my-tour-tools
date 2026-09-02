@@ -1,213 +1,174 @@
 import streamlit as st
+import requests
 import re
+import collections
+import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor
+import itertools
 
 st.set_page_config(
-    page_title="ReplaysText",
+    page_title="Tera Fetcher",
     layout="wide"
 )
-
-teams_tags = {}
-formats = []
-Output = []
-
-def team_test(x):
-    teams = []
-    for key in teams_tags:
-            team = re.search(rf'\b{key}\b', x)
-            if team:
-                teams.append((team.start(), team.group()))
-    return [name for index, name in sorted(teams)]
 
 st.markdown(
     """
     <style>
         .block-container {
-            padding-top: 1rem;
+            padding-top: 1.4rem;
             padding-bottom: 1rem;
         }
+    </style>
     """,
     unsafe_allow_html=True,
 )
 
-st.title("Replays TextBlock Generator:")
+st.title("Tera Fetcher Tool For Usage Stats:")
 
-if "output" not in st.session_state:
-    st.session_state.output = ""
-if st.session_state.get('clear'):
-    st.session_state['block'] = ''
-    st.session_state.output = ""
-if st.session_state.get('streamlit'):
-    st.session_state['block'] = 'generate'
+if "replays" not in st.session_state:
+    st.session_state.replays = ""
 
+if "final_bbcode" not in st.session_state:
+    st.session_state.final_bbcode = ""
 
-Block = st.text_area("Enter Replay Text Block Here...", value=st.session_state.get("links", ""), key="block", height=200)
+if "table" not in st.session_state:
+    st.session_state.table = []
 
-col1, col2, _ = st.columns([1, 1, 4], gap="small")
+if "no_tera" not in st.session_state:
+    st.session_state.no_tera = 0
 
+if "tera" not in st.session_state:
+    st.session_state.tera = {}
+
+if "sorted_tera" not in st.session_state:
+    st.session_state.sorted_tera = {}
+
+if "processed_replay" not in st.session_state:
+    st.session_state.processed_replay = 0
+
+if "time" not in st.session_state:
+    st.session_state.time = 0
+
+if "invalid_urls" not in st.session_state:
+    st.session_state.invalid_urls = []
+
+if "warn" not in st.session_state:
+    st.session_state.warn = False
+
+def fetch_tera(replay):
+    tera = {}
+    no_tera = 0
+    if replay.strip() == "":
+        return 
+    if not replay.startswith("https://replay"):
+        return
+    if "gen9" not in replay:
+        return
+    retry = 0
+    while retry != 3:
+        try:
+            a = requests.get(replay + ".log")
+            a.raise_for_status()
+            break
+        except:
+            retry += 1
+    else:
+        return
+    if "|rule|Terastal Clause: You cannot Terastallize" in a.text:
+        return
+    lock = threading.Lock()
+    b = re.findall(r'(\|-terastallize\|.*: .*)', a.text)
+    if len(b) == 1:
+        with lock:
+            no_tera += 1
+    elif len(b) == 0:
+        with lock:
+            no_tera += 2
+
+    for i in b:
+        c = a.text.split(i)
+        d = re.findall(r'\|-terastallize\|(.*): (.*)', i)
+        e = d[0][1].split("|")
+        for j in reversed(c[0].splitlines()):
+            if re.match(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j):
+                f = re.findall(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j)
+                with lock:
+                    if f[0].strip() not in tera:
+                        tera[f[0].strip()] = []
+                    tera[f[0].strip()].append(e[1].strip())
+                break
+
+    return tera, no_tera
+
+def clear():
+    st.session_state.replays = ""
+    st.session_state.final_bbcode = ""
+    st.session_state.table = []
+    st.session_state.no_tera = 0
+    st.session_state.tera = {}
+    st.session_state.sorted_tera = {}
+    st.session_state.processed_replay = 0
+    st.session_state.invalid_urls = []
+    st.session_state.warn = False
+
+st.text_area("Enter Replay URL Here...", key="replays", height=200)
+
+col1, col2, _ = st.columns([1, 1, 6], gap="small")
 with col1:
-    if st.button("Generate", key='generate', use_container_width=True):
-        for i in Block.splitlines():
-            b = re.findall(r'^([^:]+):',i)
-            if b:
-                if b[0].strip() not in formats:
-                    formats.append(b[0].strip())
+    if st.button("Fetch", use_container_width=True):
+        st.session_state.no_tera = 0
+        st.session_state.tera = {}
+        st.session_state.table = []
+        st.session_state.invalid_urls = []
+        st.session_state.processed_replay = 0
+        st.session_state.warn = False
 
-        teams = []
+        with ThreadPoolExecutor(max_workers=50) as executor:
+            output = list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
 
-        x = re.findall(r"^.*?\(\d+\).*?vs.*?\(\d+\).*", Block, re.MULTILINE)
-        for y in x:
-            u = y.split("vs")
-            for z in u:
-                w1 = re.sub(r":[^:]+:", "", z)
-                w2 = re.sub(r"[^a-zA-Z\s]", "", w1)
-                teams.append(w2.strip())
+            for o, p in output:
+                if o:
+                    for key, value in o.items():
+                        if key not in st.session_state.tera:
+                            st.session_state.tera[key] = []
+                        for i in value:
+                            st.session_state.tera[key].append(i)
+                    st.session_state.no_tera += p
 
-        k = ""
-        for t in teams:
-            n = t.split()[:2]
-            if len(n) == 1:
-                k = t[:2].upper()
-                j = f"[{k}]"
-                if j not in teams_tags.values():
-                    teams_tags[t] = j
-                else:
-                    k = k[0]
-                    for x in t[1:]:
-                        k += x.upper()
-                        j = f"[{k}]"
-                        if j not in teams_tags.values():
-                            teams_tags[t] = j
-                            break
-                        else:
-                            k = k[0]
-                    else:
-                        teams_tags.clear()
-                        for t in teams:
-                            n = t.split()
-                            if len(n) == 1:
-                                k = t[:3].upper()
-                                j = f"[{k}]"
-                                if j not in teams_tags.values():
-                                    teams_tags[t] = j
-                                else:
-                                    k = k[0]
-                                    for l, q in zip(t[1:], t[2:]):
-                                        k += (l+q).upper()
-                                        j = f"[{k}]"
-                                        if j not in teams_tags.values():
-                                            teams_tags[t] = j
-                                            break
-                                        else:
-                                            k = k[0]
-                                            k += (q+l).upper()
-                                            j = f"[{k}]"
-                                            if j not in teams_tags.values():
-                                                teams_tags[t] = j
-                                                break
-                                            else:
-                                                k = k[0] # I am really fucking sure 99.99% of English Words are not coming this far...
-            elif len(n) == 2:
-                k = n[0][0].upper()
-                if teams_tags:
-                    rl = len(next(iter(teams_tags.values())))
-                    rll = rl - 2
-                elif not teams_tags:
-                    rll = 2
-                if rll == 2:
-                    for i in n[1]:
-                        k += i.upper()
-                        j = f"[{k}]"
-                        if j not in teams_tags.values():
-                            teams_tags[t] = j
-                            break
-                        else:
-                            k = n[0][0].upper()
-                else:
-                    teams_tags.clear()
-                    for t in teams:
-                        n = t.split()[:2]
-                        if len(n) == 1:
-                            k = t[:2].upper()
-                            j = f"[{k}]"
-                            if j not in teams_tags.values():
-                                teams_tags[t] = j
-                            else:
-                                k = k[0]
-                                for x in t[1:]:
-                                    k += x.upper()
-                                    j = f"[{k}]"
-                                    if j not in teams_tags.values():
-                                        teams_tags[t] = j
-                                        break
-                                    else:
-                                        k = k[0]
-                                else:
-                                    teams_tags.clear()
-                                    for t in teams:
-                                        n = t.split()
-                                        if len(n) == 1:
-                                            k = t[:3].upper()
-                                            j = f"[{k}]"
-                                            if j not in teams_tags.values():
-                                                teams_tags[t] = j
-                                            else:
-                                                k = k[0]
-                                                for l, q in zip(t[1:], t[2:]):
-                                                    k += (l+q).upper()
-                                                    j = f"[{k}]"
-                                                    if j not in teams_tags.values():
-                                                        teams_tags[t] = j
-                                                        break
-                                                    else:
-                                                        k = k[0]
-                                                        k += (q+l).upper()
-                                                        j = f"[{k}]"
-                                                        if j not in teams_tags.values():
-                                                            teams_tags[t] = j
-                                                            break
-                                                        else:
-                                                            k = k[0]
-                        elif len(n) == 2:                  
-                            k = n[0][0].upper()
-                            for l, q in zip(n[1][0:], n[1][1:]):
-                                k += (l+q).upper()
-                                j = f"[{k}]"
-                                if j not in teams_tags.values():
-                                    teams_tags[t] = j
-                                    break
-                                else:
-                                    k = n[0][0].upper()
-                                    k += (q+l).upper()
-                                    j = f"[{k}]"
-                                    if j not in teams_tags.values():
-                                        teams_tags[t] = j
-                                        break
-                                    else:
-                                        k = n[0][0].upper()
+        if st.session_state.tera == {} and st.session_state.no_tera == 0:
+            st.session_state.warn = True
+        else:
+            st.session_state.table = []
+            header = '''[TABLE width="100%"]
+[TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
+            st.session_state.table.append(header)
 
-        matchups = re.findall(r'(^.*?\(\d+\).*?vs.*?\(\d+\).*(?:\n(?!^.*?\(\d+\).*?vs.*?\(\d+\)).+)*)', Block, re.MULTILINE)
+            st.session_state.sorted_tera = {keys : values for keys, values in sorted(st.session_state.tera.items(), key = lambda item: len(item[1]), reverse=True)}
 
-        for key in formats:
-            store2 = key
-            Output.append(store2)
-            for x in matchups:
-                u = re.sub(r":[^:]+:", "", x)
-                v = re.sub(r"[^a-zA-Z0-9\s]", "", u).strip()
-                teams = team_test(v)
-                if len(teams)==2:
-                    t1 = teams_tags[teams[0]]
-                    t2 = teams_tags[teams[1]]
-                    f = re.findall(rf'(?i){re.escape(key)}:\s*(.*)', x)                    
-                    for j in f:
-                        store3 = f'{t1} {j.strip()} {t2}'
-                        Output.append(store3)
+            for x, y in st.session_state.sorted_tera.items():
+                counts = collections.Counter(y)
+                sorted_counts = dict(counts.most_common())
+                types = ""
+                for l, m in sorted_counts.items():
+                    types += f"{l} ({m}), "
+                types = types[:-2]
+                row = f'''[TR][TD width="33.3333%"]:{x}:{x}[/TD][TD width="10%"]{len(y)}[/TD][TD width="33.3333%"]{types}[/TD][/TR]'''
+                st.session_state.table.append(row)
 
-            Output.append("")
+            closer = f'''[TR][TD width="33.3333%"]No Tera[/TD][TD width="10%"]{st.session_state.no_tera}[/TD][TD width="33.3333%"][/TD][/TR]
+[/TABLE]'''
+            st.session_state.table.append(closer)
 
-        st.session_state.output = "\n".join(Output)
+        st.session_state.final_bbcode = "\n".join(st.session_state.table)
 
 with col2:
-    st.button('Clear', key='clear', use_container_width=True)
+    st.button("Clear", on_click=clear, use_container_width=True)
 
-st.caption("ReplayStat Block:")
-st.code(st.session_state.output, language=None, height=300)
+if st.session_state.warn == True:
+    st.warning("No Replays Found! Please Enter Atleast One Valid Gen 9 Link!")
+
+st.caption("BB Code:")
+st.code(st.session_state.final_bbcode, language=None, height=300)
+
+        
