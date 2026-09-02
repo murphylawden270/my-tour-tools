@@ -54,6 +54,8 @@ if "invalid_urls" not in st.session_state:
     st.session_state.invalid_urls = []
 
 def fetch_tera(replay):
+    tera = {}
+    no_tera = 0
     if replay.strip() == "":
         return 
     if not replay.startswith("https://replay"):
@@ -76,10 +78,10 @@ def fetch_tera(replay):
     b = re.findall(r'(\|-terastallize\|.*: .*)', a.text)
     if len(b) == 1:
         with lock:
-            st.session_state.no_tera += 1
+            no_tera += 1
     elif len(b) == 0:
         with lock:
-            st.session_state.no_tera += 2
+            no_tera += 2
 
     for i in b:
         c = a.text.split(i)
@@ -89,10 +91,12 @@ def fetch_tera(replay):
             if re.match(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j):
                 f = re.findall(rf'\|(?:switch|drag)\|{d[0][0].strip()}: {re.escape(e[0].strip())}\|([^,|]+)(?:,[^|]*)?\|', j)
                 with lock:
-                    if f[0].strip() not in st.session_state.tera:
-                        st.session_state.tera[f[0].strip()] = []
-                    st.session_state.tera[f[0].strip()].append(e[1].strip())
+                    if f[0].strip() not in tera:
+                        tera[f[0].strip()] = []
+                    tera[f[0].strip()].append(e[1].strip())
                 break
+
+    return tera, no_tera
 
 st.session_state.replays = st.text_area("Enter Replay URL Here...", height=200)
 
@@ -105,7 +109,15 @@ if st.button("Fetch"):
         st.session_state.processed_replay = 0
 
     with ThreadPoolExecutor(max_workers=50) as executor:
-        list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
+        output = list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
+
+        for o, p in output:
+            if o is not None:
+                for key, value in o.items():
+                    if key not in st.session_state.tera:
+                        st.session_state.tera[key] = []
+                    st.session_state.tera[key].append(value)
+                st.session_state.no_tera += p 
 
     header = '''[TABLE width="100%"]
 [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
