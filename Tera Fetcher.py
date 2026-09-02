@@ -5,6 +5,7 @@ import collections
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
+import itertools
 
 st.set_page_config(
     page_title="Tera Fetcher",
@@ -106,7 +107,7 @@ if st.button("Fetch"):
         st.session_state.processed_replay = 0
 
     with ThreadPoolExecutor(max_workers=50) as executor:
-        list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
+        list(executor.map(fetch_tera, st.session_state.replays.splitlines(), itertools.repeat(st.session_state.lock)))
 
     header = '''[TABLE width="100%"]
 [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
