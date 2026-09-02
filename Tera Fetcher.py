@@ -116,8 +116,11 @@ if st.button("Fetch"):
                 for key, value in o.items():
                     if key not in st.session_state.tera:
                         st.session_state.tera[key] = []
-                    st.session_state.tera[key].append(value)
-                st.session_state.no_tera += p 
+                    for i in value:
+                        st.session_state.tera[key].append(i)
+                st.session_state.no_tera += p
+
+    print(st.session_state.tera)
 
     header = '''[TABLE width="100%"]
 [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
