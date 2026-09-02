@@ -53,6 +53,9 @@ if "time" not in st.session_state:
 if "invalid_urls" not in st.session_state:
     st.session_state.invalid_urls = []
 
+if "warn" not in st.session_state:
+    st.session_state.warn = False
+
 def fetch_tera(replay):
     tera = {}
     no_tera = 0
@@ -98,30 +101,56 @@ def fetch_tera(replay):
 
     return tera, no_tera
 
-st.session_state.replays = st.text_area("Enter Replay URL Here...", height=200)
+def clear():
+    st.session_state.replays = ""
+    st.session_state.final_bbcode = ""
+    st.session_state.table = []
+    st.session_state.no_tera = 0
+    st.session_state.tera = {}
+    st.session_state.sorted_tera = {}
+    st.session_state.processed_replay = 0
+    st.session_state.invalid_urls = []
+    st.session_state.warn = False
 
-if st.button("Fetch"):
-    if st.session_state.replays.strip():
+st.text_area("Enter Replay URL Here...", key="replays", height=200)
+
+col1, col2, _ = st.columns([1, 1, 6], gap="small")
+with col1:
+    if st.button("Fetch", use_container_width=True):
         st.session_state.no_tera = 0
         st.session_state.tera = {}
         st.session_state.table = []
         st.session_state.invalid_urls = []
         st.session_state.processed_replay = 0
+        st.session_state.warn = False
 
-    with ThreadPoolExecutor(max_workers=50) as executor:
-        output = list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
+        with ThreadPoolExecutor(max_workers=50) as executor:
+            output = list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
 
-        for o, p in output:
-            if o is not None:
-                for key, value in o.items():
-                    if key not in st.session_state.tera:
-                        st.session_state.tera[key] = []
-                    for i in value:
-                        st.session_state.tera[key].append(i)
-                st.session_state.no_tera += p
+            for o, p in output:
+                if o:
+                    for key, value in o.items():
+                        if key not in st.session_state.tera:
+                            st.session_state.tera[key] = []
+                        for i in value:
+                            st.session_state.tera[key].append(i)
+                    st.session_state.no_tera += p
 
-    print(st.session_state.tera)
+        if st.session_state.tera == {} and st.session_state.no_tera == 0:
+            st.session_state.warn = True
 
+with col2:
+    st.button("Clear", on_click=clear, use_container_width=True)
+
+print(st.session_state.warn)
+
+print(st.session_state.warn)
+print(st.session_state.replays)
+
+if st.session_state.warn == True:
+    st.warning("No Replays Found! Please Enter Atleast One Valid Gen 9 Link!")
+elif st.session_state.warn == False and st.session_state.replays.strip() != "":
+    st.session_state.table = []
     header = '''[TABLE width="100%"]
 [TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
     st.session_state.table.append(header)
@@ -143,6 +172,7 @@ if st.button("Fetch"):
     st.session_state.table.append(closer)
 
     st.session_state.final_bbcode = "\n".join(st.session_state.table)
-
     st.caption("BB Code:")
     st.code(st.session_state.final_bbcode, language=None, height=300)
+
+        
