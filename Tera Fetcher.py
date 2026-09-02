@@ -138,41 +138,35 @@ with col1:
 
         if st.session_state.tera == {} and st.session_state.no_tera == 0:
             st.session_state.warn = True
+        else:
+            st.session_state.table = []
+            header = '''[TABLE width="100%"]
+[TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
+            st.session_state.table.append(header)
+
+            st.session_state.sorted_tera = {keys : values for keys, values in sorted(st.session_state.tera.items(), key = lambda item: len(item[1]), reverse=True)}
+
+            for x, y in st.session_state.sorted_tera.items():
+                counts = collections.Counter(y)
+                sorted_counts = dict(counts.most_common())
+                types = ""
+                for l, m in sorted_counts.items():
+                    types += f"{l} ({m}), "
+                types = types[:-2]
+                row = f'''[TR][TD width="33.3333%"]:{x}:{x}[/TD][TD width="10%"]{len(y)}[/TD][TD width="33.3333%"]{types}[/TD][/TR]'''
+                st.session_state.table.append(row)
+
+            closer = f'''[TR][TD width="33.3333%"]No Tera[/TD][TD width="10%"]{st.session_state.no_tera}[/TD][TD width="33.3333%"][/TD][/TR]
+[/TABLE]'''
+            st.session_state.table.append(closer)
+
+        st.session_state.final_bbcode = "\n".join(st.session_state.table)
 
 with col2:
     st.button("Clear", on_click=clear, use_container_width=True)
 
-print(st.session_state.warn)
-
-print(st.session_state.warn)
-print(st.session_state.replays)
-
 if st.session_state.warn == True:
     st.warning("No Replays Found! Please Enter Atleast One Valid Gen 9 Link!")
-elif st.session_state.warn == False and st.session_state.replays.strip() != "":
-    st.session_state.table = []
-    header = '''[TABLE width="100%"]
-[TR][TD width="33.3333%"]Pokemon[/TD][TD width="10%"]Count[/TD][TD width="33.3333%"]Type[/TD][/TR]'''
-    st.session_state.table.append(header)
 
-    st.session_state.sorted_tera = {keys : values for keys, values in sorted(st.session_state.tera.items(), key = lambda item: len(item[1]), reverse=True)}
-
-    for x, y in st.session_state.sorted_tera.items():
-        counts = collections.Counter(y)
-        sorted_counts = dict(counts.most_common())
-        types = ""
-        for l, m in sorted_counts.items():
-            types += f"{l} ({m}), "
-        types = types[:-2]
-        row = f'''[TR][TD width="33.3333%"]:{x}:{x}[/TD][TD width="10%"]{len(y)}[/TD][TD width="33.3333%"]{types}[/TD][/TR]'''
-        st.session_state.table.append(row)
-
-    closer = f'''[TR][TD width="33.3333%"]No Tera[/TD][TD width="10%"]{st.session_state.no_tera}[/TD][TD width="33.3333%"][/TD][/TR]
-[/TABLE]'''
-    st.session_state.table.append(closer)
-
-    st.session_state.final_bbcode = "\n".join(st.session_state.table)
-    st.caption("BB Code:")
-    st.code(st.session_state.final_bbcode, language=None, height=300)
-
-        
+st.caption("BB Code:")
+st.code(st.session_state.final_bbcode, language=None, height=300)
