@@ -95,6 +95,8 @@ def fetch_tera(replay):
                     st.session_state.tera[f[0].strip()].append(e[1].strip())
                 break
 
+st.session_state.replays = st.text_area("Enter Replay URL Here...", height=200)
+
 if st.button("Fetch"):
     with ThreadPoolExecutor(max_workers=50) as executor:
         list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
