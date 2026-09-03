@@ -2,10 +2,9 @@ import streamlit as st
 import requests
 import re
 import collections
-import sys
+import time
 import threading
 from concurrent.futures import ThreadPoolExecutor
-import itertools
 
 st.set_page_config(
     page_title="Tera Fetcher",
@@ -50,8 +49,14 @@ if "processed_replay" not in st.session_state:
 if "time" not in st.session_state:
     st.session_state.time = 0
 
+if "complete" not in st.session_state:
+    st.session_state.complete = 0
+
 if "invalid_urls" not in st.session_state:
     st.session_state.invalid_urls = []
+
+if "send" not in st.session_state:
+    st.session_state.send = ""
 
 if "warn" not in st.session_state:
     st.session_state.warn = False
@@ -60,11 +65,11 @@ def fetch_tera(replay):
     tera = {}
     no_tera = 0
     if replay.strip() == "":
-        return 
+        return "", None
     if not replay.startswith("https://replay"):
-        return
+        return "", None
     if "gen9" not in replay:
-        return
+        return replay, None
     retry = 0
     while retry != 3:
         try:
@@ -74,9 +79,9 @@ def fetch_tera(replay):
         except:
             retry += 1
     else:
-        return
+        return replay, None
     if "|rule|Terastal Clause: You cannot Terastallize" in a.text:
-        return
+        return replay, None
     lock = threading.Lock()
     b = re.findall(r'(\|-terastallize\|.*: .*)', a.text)
     if len(b) == 1:
@@ -110,9 +115,12 @@ def clear():
     st.session_state.sorted_tera = {}
     st.session_state.processed_replay = 0
     st.session_state.invalid_urls = []
+    st.session_state.send = ""
     st.session_state.warn = False
+    st.session_state.time = 0
+    st.session_state.complete = 0
 
-st.text_area("Enter Replay URL Here...", key="replays", height=200)
+st.text_area("**Enter Gen 9 Replay URL Here...**", key="replays", height=200)
 
 col1, col2, _ = st.columns([1, 1, 6], gap="small")
 with col1:
@@ -121,20 +129,31 @@ with col1:
         st.session_state.tera = {}
         st.session_state.table = []
         st.session_state.invalid_urls = []
+        st.session_state.send = ""
         st.session_state.processed_replay = 0
         st.session_state.warn = False
+        st.session_state.time = 0
+        st.session_state.complete = 0
 
+        st.session_state.time = time.time()
         with ThreadPoolExecutor(max_workers=50) as executor:
             output = list(executor.map(fetch_tera, st.session_state.replays.splitlines()))
 
             for o, p in output:
-                if o:
-                    for key, value in o.items():
-                        if key not in st.session_state.tera:
-                            st.session_state.tera[key] = []
-                        for i in value:
-                            st.session_state.tera[key].append(i)
-                    st.session_state.no_tera += p
+                if o is None:
+                    continue
+                if p is None:
+                    if o != "":
+                        if o not in st.session_state.invalid_urls: 
+                            st.session_state.invalid_urls.append(o)
+                    continue
+                for key, value in o.items():
+                    if key not in st.session_state.tera:
+                        st.session_state.tera[key] = []
+                    for i in value:
+                        st.session_state.tera[key].append(i)
+                st.session_state.no_tera += p
+                st.session_state.processed_replay += 1
 
         if st.session_state.tera == {} and st.session_state.no_tera == 0:
             st.session_state.warn = True
@@ -168,5 +187,16 @@ with col2:
 if st.session_state.warn == True:
     st.warning("No Replays Found! Please Enter Atleast One Valid Gen 9 Link!")
 
+if st.session_state.processed_replay != 0:
+    st.caption(f"Processed {st.session_state.processed_replay} replays.")
+    st.session_state.complete = time.time()
+    st.caption(f"Time taken: {st.session_state.complete - st.session_state.time} seconds.")
 st.caption("BB Code:")
 st.code(st.session_state.final_bbcode, language=None, height=300)
+
+if st.session_state.invalid_urls != []:
+    st.session_state.send = ""
+    for d in st.session_state.invalid_urls:
+        st.session_state.send += f"- {d}\n\n"
+    st.warning(f'''Invalid Replays Found: \n\n
+{st.session_state.send}''')
