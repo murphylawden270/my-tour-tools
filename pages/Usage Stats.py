@@ -11,6 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
+import requests
+
 from concurrent.futures import ThreadPoolExecutor
 
 st.set_page_config(
@@ -65,6 +67,8 @@ def name_dialog():
                 st.rerun()
 
 def replay(key, values):
+    if not values or values.strip() == "":
+        return key, [], 0
     rl = len(values.splitlines())
     bbcode = []
     driver = webdriver.Chrome(options=options)
@@ -85,7 +89,7 @@ def replay(key, values):
     TextArea = driver.find_elements(By.CSS_SELECTOR, "textarea.rawtext.results")
     for i in TextArea:
             usage.append(i.get_attribute("value"))
-        
+   
     for i, j in enumerate(usage):
             if i == 0:
                 if "Leads" in usage[3] and "1" in usage[3]:
@@ -124,9 +128,23 @@ def replay(key, values):
 
     return key, bbcode, rl
 
-if st.button("Add Format", icon="➕"):
-    name_dialog()
-
+big1, big2 = st.columns([3,17], gap="small")
+with big1:
+    if st.button("Add Format", icon="➕"):
+        name_dialog()
+with big2:
+    with st.container(border=True):
+        head, check1, check2, check3, check4 = st.columns([1,1,1.6,1.1,1], gap="medium", vertical_alignment="center")
+        with head:
+            st.text("Additional Options:")
+        with check1:
+            st.checkbox("Spoiler", value=True)
+        with check2:
+            st.checkbox("Moves and Teammates", value=True)
+        with check3:
+            st.checkbox("Combos", value=True)
+        with check4:
+            st.checkbox("Leads", value=True)
 
 for f, formats in enumerate(st.session_state.project):
     with st.container(border=True):
@@ -142,13 +160,14 @@ for f, formats in enumerate(st.session_state.project):
         links = st.text_area("Enter Replay URLs Here...", key=f"text_area_{f}", height=100)
         st.session_state.project[formats] = links    
 
+exists = False
 col1, col2, col3 = st.columns([1,1,5], gap="small")
 with col1:
     if st.button("Generate", use_container_width=True):
         st.session_state.processed_replays = 0
         st.session_state.processed_formats = 0
         if not st.session_state.project:
-            st.error("No formats available! Please add a format first.")
+            exists = True
         else:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 output = list(executor.map(replay, st.session_state.project.keys(), st.session_state.project.values()))
@@ -171,10 +190,16 @@ for i in st.session_state.project.keys():
     if i in st.session_state.all_bbcode:
         st.session_state.final.append("\n".join(st.session_state.all_bbcode[i]))
 
+if exists == True:
+    st.error("No formats available! Please add a format first.")
+
 if st.session_state.final:
-    done = "\n".join(st.session_state.final)
-    st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
-    end = time.time()
-    st.caption(f"Time taken: {end - start} seconds.")
-    st.caption("BB Code:")
-    st.code(done, language=None, height=300)
+    if st.session_state.processed_replays == 0:
+        st.error("No replays found! Please enter a replay.")
+    elif st.session_state.processed_replays !=0 and st.session_state.processed_formats !=0:
+        done = "\n".join(st.session_state.final)
+        st.caption(f"Processed {st.session_state.processed_formats} formats and {st.session_state.processed_replays} replays.")
+        end = time.time()
+        st.caption(f"Time taken: {end - start} seconds.")
+        st.caption("BB Code:")
+        st.code(done, language=None, height=300)
